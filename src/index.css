@@ -1,0 +1,11 @@
+/* This file will contain the CSS of the React Components */
+
+.square {
+  height: 100px;
+  width: 100px;
+  font-size: 50px;
+  border-width: 3px;
+  border-color: black;
+  background-color: white;
+  vertical-align: top;
+}
