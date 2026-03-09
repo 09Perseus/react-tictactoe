@@ -13,9 +13,8 @@ function Square({value, onSquareClick}): TSX.Element{
 
 
 //function that displays the board
-function Board(): TSX.Element {
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(null))
+function Board({xIsNext, squares, onPlay}): TSX.Element {
+  
 
   function handleClick(i){
     if (squares[i] || calculateWinner(squares)){
@@ -28,8 +27,7 @@ function Board(): TSX.Element {
     } else {
       nextSquares[i] = "O";
     }
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+    onPlay(nextSquares);
   }
   
   //Checks for winner
@@ -94,13 +92,44 @@ function Board(): TSX.Element {
 
 //default game function
 export default function Game() {
+
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [currentMove, setCurrentMove] = useState(0);
+  const xIsNext = currentMove % 2 === 0;
+  const currentSquares = history[currentMove];
+
+  function handlePlay(nextSquares){
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1)
+  }
+
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove);
+  }
+
+  const moves = history.map((squares, move) => {
+    let description;
+    if (move > 0) {
+      description = "Go to move #" + move;
+    } else {
+      description = "Go to game start"
+    }
+    return (
+      <li key = {move}>
+        <button onClick = {() => jumpTo(move)}>{description}</button>
+      </li>
+    )
+  } )
+
+
   return (
     <div>
       <div>
-        <Board />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div>
-        <ol></ol>
+        <ol>{moves}</ol>
       </div>
     </div>
   )
